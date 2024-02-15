@@ -104,6 +104,33 @@ public partial class OpenAIClient
     {
     }
 
+#pragma warning disable AZC0007 // DO provide a minimal constructor that takes only the parameters required to connect to the service.
+    /// <summary>
+    ///     Note this is only for Educational purpose, not production code.
+    /// </summary>
+    /// <param name="endpoint">
+    ///     Endpoint to connect with LLM
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    ///     <paramref name="endpoint"/> is null.
+    /// </exception>
+    public OpenAIClient(Uri endpoint)
+#pragma warning restore AZC0007 // DO provide a minimal constructor that takes only the parameters required to connect to the service.
+    {
+        Argument.AssertNotNull(endpoint, nameof(endpoint));
+        var options = new OpenAIClientOptions();
+
+        ClientDiagnostics = new ClientDiagnostics(options, true);
+
+        _pipeline = HttpPipelineBuilder.Build(
+            options,
+            Array.Empty<HttpPipelinePolicy>(),
+             Array.Empty<HttpPipelinePolicy>(),
+            new ResponseClassifier());
+        _endpoint = endpoint;
+        _apiVersion = options.Version;
+    }
+
     /// <summary>
     ///     Initializes a instance of OpenAIClient for use with the non-Azure OpenAI endpoint.
     /// </summary>
